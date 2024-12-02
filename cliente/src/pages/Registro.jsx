@@ -1,18 +1,30 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Registrar() {
  const [nome,setNome] = useState('');
  const [email,setEmail] = useState('');
 
- const Registrar = (event) => {
+ const navigate = useNavigate();
+
+ const Registrar = async(event) => {
  event.preventDefault();
- await fetch("http://localhost:3000/usuarios",{
+ try{
+  const resposta = await fetch("http://localhost:3003/usuarios",{
   method: 'POST',
   headers: {'content-type': 'Application/json'},
-  body: JSON.stringify({nome:nome, email:email
+  body: JSON.stringify({
+    nome:nome, 
+    email:email
   })
- })
+ });
+if (resposta.ok) {
+  navigate('/');
+}
+ }catch(err){
+  alert('erro no registro!',err);
  }
+}
 
   return (
         <main>
@@ -30,4 +42,5 @@ export default function Registrar() {
           </form>
         </main>
   );
+
 }

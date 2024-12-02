@@ -63,6 +63,6 @@ app.delete('/usuarios/:id', (req, res) => {
     res.status(204).send();
 });
 
-app.listen(3000, () => {
+app.listen(3003, () => {
     console.log('Servidor rodando na porta 3000');
 });
