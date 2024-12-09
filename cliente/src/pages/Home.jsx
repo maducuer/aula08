@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import "jspdf-autoTable";
 
 export default function Home() {
 
@@ -25,14 +27,38 @@ export default function Home() {
     } catch{
       alert('ixi lascou')
     }
-  }
+  };
 
+  const exportarPDF = () => {
+    const doc = new jsPDF ();
+
+    const tabela = usuarios.map ( usuario => [
+      usuario.nome,
+      usuario.email
+    ]);
+
+    doc.text("Litsa de Usuários",10, 10);
+
+    doc.autoTable({
+      head:[["Nome", "E-mail"]],
+      body: tabela
+    });
+
+    doc.save("alunosIFMS");
+  }
   return (
+    <div>
     <table>
+    <thead>
+    <button variant="contained" onClick={() => exportarPDF()}>
+    Gerar PDF
+    </button>
       <tr>
-        <td>Nome</td>
-        <td>E-mail</td>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Ações</th>
       </tr>
+      <tbody>
       {usuarios.map((usuario) =>
         <tr key={usuario.id}>
           <td>{usuario.nome}</td>
@@ -41,5 +67,6 @@ export default function Home() {
         </tr>
       )}
     </table>
+    </tbody>
   );
 }
