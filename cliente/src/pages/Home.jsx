@@ -1,6 +1,8 @@
+
 import { useEffect, useState } from "react";
-import jsPDF from "jspdf";
-import "jspdf-autoTable";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import { Button } from '@mui/material';
 
 export default function Home() {
 
@@ -9,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     const buscarUsuario = async () => {
       try {
-        const resposta = await fetch("http://localhost:3003/usuarios");
+        const resposta = await fetch("http://localhost:3000/usuarios");
         const dados = await resposta.json();
         setUsuarios(dados);
       } catch {
@@ -18,55 +20,49 @@ export default function Home() {
     }
     buscarUsuario();
   }, [usuarios])
-
+  
   const deletar = async(id) => {
-    try {
-      await fetch('http://localhost:3003/usuarios/'+id ,{
-        method: 'DELETE'
-      });
-    } catch{
-      alert('ixi lascou')
+    try{
+    await fetch('http://localhost:3000/usuarios/'+ id,{
+      method: 'DELETE'
+    });
+    }catch{
+     alert('Ish, nã deu certo!');
     }
-  };
+  }
 
   const exportarPDF = () => {
-    const doc = new jsPDF ();
 
-    const tabela = usuarios.map ( usuario => [
-      usuario.nome,
-      usuario.email
+    const doc = new jsPDF();
+    const tabelaDados = usuarios.map((usuario) =>[
+     usuario.nome,
+     usuario.email,
     ]);
 
-    doc.text("Litsa de Usuários",10, 10);
-
+    doc.text("Lista de Usuarios", 10, 10);
     doc.autoTable({
-      head:[["Nome", "E-mail"]],
-      body: tabela
+      head:[["Nome", "Email"]],
+      body: tabelaDados,
     });
 
-    doc.save("alunosIFMS");
-  }
+    doc.save("alunosIFMS.pdf");
+  };
+
   return (
-    <div>
-    <table>
-    <thead>
-    <button variant="contained" onClick={() => exportarPDF()}>
-    Gerar PDF
-    </button>
+    <table border= '1' >
+      <Button variant="contained" size="large" onClick={exportarPDF}>Exportar PDF</Button>
       <tr>
-        <th>Nome</th>
-        <th>E-mail</th>
-        <th>Ações</th>
+        <td>Nome</td>
+        <td>E-mail</td>
       </tr>
-      <tbody>
       {usuarios.map((usuario) =>
         <tr key={usuario.id}>
           <td>{usuario.nome}</td>
           <td>{usuario.email}</td>
-          <td><button onClick={()=> deletar(usuario.id)}>REMOVER</button></td>
+          <td> <button onClick={() => deletar(usuario.id)} > X</button></td>
+          
         </tr>
       )}
     </table>
-    </tbody>
   );
 }
